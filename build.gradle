@@ -52,7 +52,8 @@ dependencies {
 			"org.jetbrains.kotlin:kotlin-reflect",
 			"org.postgresql:postgresql",
 			"javax.xml.bind:jaxb-api",
-            "org.flywaydb:flyway-core"
+            "org.flywaydb:flyway-core",
+			"com.fasterxml.jackson.module:jackson-module-kotlin"
 	)
 
 	testCompile(

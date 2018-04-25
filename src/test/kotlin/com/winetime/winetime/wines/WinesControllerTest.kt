@@ -1,6 +1,9 @@
 package com.winetime.winetime.wines
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.assertj.core.api.Assertions.assertThat
+import org.flywaydb.core.Flyway
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -22,6 +25,15 @@ class WinesControllerTest {
     @Autowired
     lateinit var wineRepo: WineRepository
 
+    @Autowired
+    lateinit var flyway: Flyway
+
+    @AfterEach
+    fun tearDown() {
+        flyway.clean()
+        flyway.migrate()
+    }
+
     @DisplayName("GET /wines")
     @Nested()
     inner class GetWines {
@@ -29,12 +41,19 @@ class WinesControllerTest {
         @DisplayName("it returns a 200")
         @Test
         fun returns200() {
-            wineRepo.save(Wine(winery = "blah2", varietal = "baroloz", vintage = 2018, name = "coolio"))
+            val wine = wineRepo.save(Wine(winery = "blah2", varietal = "baroloz", vintage = 2018, name = "coolio"))
 
+            println("wine = ${wine}")
             val response = restTemplate.getForEntity<List<Wine>>("/wines")
 
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-            assertThat(response.body).isNotEmpty
+
+            val mapper = jacksonObjectMapper()
+            val wineFromDb = mapper.convertValue(response.body[0], Wine::class.java)
+            assertThat(wineFromDb.winery).isEqualTo(wine.winery)
+            assertThat(wineFromDb.varietal).isEqualTo(wine.varietal)
+            assertThat(wineFromDb.vintage).isEqualTo(wine.vintage)
+            assertThat(wineFromDb.name).isEqualTo(wine.name)
         }
     }
 

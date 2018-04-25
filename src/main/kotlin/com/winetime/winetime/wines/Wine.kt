@@ -1,14 +1,13 @@
 package com.winetime.winetime.wines
 
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name = "wines")
 data class Wine(
         @Id
-        val id: Int? = 0,
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        val id: Int? = null,
         val winery: String = "",
         val name: String = "",
         val varietal: String = "",
