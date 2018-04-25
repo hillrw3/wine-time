@@ -43,18 +43,13 @@ class WinesControllerTest {
         fun returns200() {
             val wine = wineRepo.save(Wine(winery = "blah2", varietal = "baroloz", vintage = 2018, name = "coolio"))
 
-            println("wine = ${wine}")
             val response = restTemplate.getForEntity<List<Wine>>("/wines")
 
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
 
             val mapper = jacksonObjectMapper()
-            val wineFromDb = mapper.convertValue(response.body[0], Wine::class.java)
-            assertThat(wineFromDb.winery).isEqualTo(wine.winery)
-            assertThat(wineFromDb.varietal).isEqualTo(wine.varietal)
-            assertThat(wineFromDb.vintage).isEqualTo(wine.vintage)
-            assertThat(wineFromDb.name).isEqualTo(wine.name)
+            val wineFromResponse = mapper.convertValue(response.body[0], Wine::class.java)
+            assertThat(wineFromResponse).isEqualTo(wine)
         }
     }
-
 }
