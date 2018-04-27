@@ -7,5 +7,5 @@ import org.springframework.web.bind.annotation.RestController
 class WinesController(private val wineRepository: WineRepository) {
 
     @GetMapping("/wines")
-    fun getWines() : List<Wine> = wineRepository.findAll()
+    fun getWines() = WineResponse(wines = wineRepository.findAll())
 }

@@ -53,14 +53,15 @@ dependencies {
 			"org.postgresql:postgresql",
 			"javax.xml.bind:jaxb-api",
             "org.flywaydb:flyway-core",
-			"com.fasterxml.jackson.module:jackson-module-kotlin"
+			"com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+"
 	)
 
 	testCompile(
 			"org.springframework.boot:spring-boot-starter-test",
 			"org.springframework.security:spring-security-test",
 			"org.junit.jupiter:junit-jupiter-api",
-            "org.assertj:assertj-core"
+            "org.assertj:assertj-core",
+			"com.nhaarman:mockito-kotlin:1.5.0"
 	)
 	testRuntime("org.junit.jupiter:junit-jupiter-engine")
 }

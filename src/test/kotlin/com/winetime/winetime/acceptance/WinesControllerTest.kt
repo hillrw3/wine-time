@@ -1,9 +1,9 @@
-package com.winetime.winetime.wines
+package com.winetime.winetime.acceptance
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.winetime.winetime.wines.Wine
+import com.winetime.winetime.wines.WineRepository
+import com.winetime.winetime.wines.WineResponse
 import org.assertj.core.api.Assertions.assertThat
-import org.flywaydb.core.Flyway
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -11,45 +11,39 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
-import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.getForEntity
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-class WinesControllerTest {
-    @Autowired
-    lateinit var restTemplate: TestRestTemplate
-
+class WinesControllerTest : BaseAcceptanceTest() {
     @Autowired
     lateinit var wineRepo: WineRepository
-
-    @Autowired
-    lateinit var flyway: Flyway
-
-    @AfterEach
-    fun tearDown() {
-        flyway.clean()
-        flyway.migrate()
-    }
 
     @DisplayName("GET /wines")
     @Nested()
     inner class GetWines {
-
-        @DisplayName("it returns a 200")
+        @DisplayName("returns wines from the database")
         @Test
         fun returns200() {
-            val wine = wineRepo.save(Wine(winery = "blah2", varietal = "baroloz", vintage = 2018, name = "coolio"))
+            val wine1 = wineRepo.save(Wine(
+                    winery = "blah",
+                    varietal = "barolo",
+                    vintage = 2018,
+                    name = "coolio"
+            ))
+            val wine2 = wineRepo.save(Wine(
+                    winery = "small artisanal vineyard",
+                    varietal = "chardonnay",
+                    vintage = 2015,
+                    name = "Butter n jam"
+            ))
 
-            val response = restTemplate.getForEntity<List<Wine>>("/wines")
+            val response = restTemplate.getForEntity<WineResponse>("/wines")
 
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-
-            val mapper = jacksonObjectMapper()
-            val wineFromResponse = mapper.convertValue(response.body[0], Wine::class.java)
-            assertThat(wineFromResponse).isEqualTo(wine)
+            assertThat(response.body?.wines).contains(wine1, wine2)
         }
     }
 }
