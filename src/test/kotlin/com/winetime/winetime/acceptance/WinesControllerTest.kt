@@ -27,18 +27,24 @@ class WinesControllerTest : BaseAcceptanceTest() {
         @DisplayName("returns wines from the database")
         @Test
         fun returns200() {
-            val wine1 = wineRepo.save(Wine(
+            val wine1 = Wine(
                     winery = "blah",
                     varietal = "barolo",
                     vintage = 2018,
-                    name = "coolio"
-            ))
-            val wine2 = wineRepo.save(Wine(
+                    name = "coolio",
+                    country = "Italy",
+                    region = "Piemonte"
+            )
+            val wine2 = Wine(
                     winery = "small artisanal vineyard",
                     varietal = "chardonnay",
                     vintage = 2015,
-                    name = "Butter n jam"
-            ))
+                    name = "Butter n jam",
+                    country = "USA",
+                    region = "California"
+            )
+
+            wineRepo.saveAll(mutableListOf(wine1, wine2))
 
             val response = restTemplate.getForEntity<WineResponse>("/wines")
 

@@ -11,5 +11,7 @@ data class Wine(
         val winery: String = "",
         val name: String = "",
         val varietal: String = "",
-        val vintage: Int = 0
+        val vintage: Int = 0,
+        val country: String = "",
+        val region: String = ""
 )
