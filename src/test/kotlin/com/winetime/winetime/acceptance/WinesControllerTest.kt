@@ -1,22 +1,24 @@
 package com.winetime.winetime.acceptance
 
+import com.winetime.winetime.createWine
 import com.winetime.winetime.wines.Wine
 import com.winetime.winetime.wines.WineRepository
 import com.winetime.winetime.wines.WineResponse
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.getForEntity
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 
 class WinesControllerTest : BaseAcceptanceTest() {
     @Autowired
     lateinit var wineRepo: WineRepository
 
     @DisplayName("GET /wines")
-    @Nested()
+    @Nested
     inner class GetWines {
         @DisplayName("returns wines from the database")
         @Test
@@ -44,6 +46,42 @@ class WinesControllerTest : BaseAcceptanceTest() {
 
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(response.body?.wines).contains(wine1, wine2)
+        }
+    }
+
+    @DisplayName("POST /wines")
+    @Nested
+    inner class PostWines {
+        private val headers = HttpHeaders()
+
+        @BeforeEach
+        fun setup() {
+            headers.contentType = MediaType.APPLICATION_JSON
+        }
+
+        @DisplayName("creates a new wine")
+        @Test
+        fun success() {
+            assertThat(wineRepo.findAll()).isEmpty()
+            val wine = createWine()
+            val wineWithId = wine.copy(id=1)
+            val request = HttpEntity(mapper.writeValueAsString(wine), headers)
+
+            val response = restTemplate.postForEntity("/wines", request, Wine::class.java)
+
+            assertThat(response.statusCode).isEqualTo(HttpStatus.CREATED)
+            assertThat(response.body).isEqualTo(wineWithId)
+            assertThat(wineRepo.findAll()).contains(wineWithId)
+        }
+
+        @DisplayName("returns an error if the request is malformed")
+        @Test
+        fun failure() {
+            val request = HttpEntity("'some': 'gibberish'", headers)
+
+            val response = restTemplate.postForEntity("/wines", request, Wine::class.java)
+
+            assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
         }
     }
 }
