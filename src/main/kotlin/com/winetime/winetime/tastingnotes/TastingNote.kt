@@ -8,17 +8,24 @@ import javax.persistence.*
 @Table(name = "tasting_notes")
 data class TastingNote(
         @Id
-        @GeneratedValue(strategy  = GenerationType.IDENTITY)
-        val id : Int? = null,
-        val notes : String = "",
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        val id: Int? = null,
+        val notes: String = "",
         @Enumerated(EnumType.ORDINAL)
-        val score : TastingScore = TastingScore.ONE,
-        @OneToOne
+        val score: TastingScore = TastingScore.ONE,
+        @ManyToOne
         @JoinColumn(name = "USER_ID")
-        val user: User = User(),
+        var user: User = User(),
         @ManyToOne
         @JoinColumn(name = "WINE_ID")
-        val wine: Wine = Wine()
+        var wine: Wine = Wine()
+)
+
+data class TastingNoteCreationTemplate(
+        val notes: String = "",
+        val score: TastingScore = TastingScore.ONE,
+        val userId: Int,
+        val wineId: Int
 )
 
 enum class TastingScore(val value: Int) {

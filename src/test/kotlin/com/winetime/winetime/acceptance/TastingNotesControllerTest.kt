@@ -2,10 +2,7 @@ package com.winetime.winetime.acceptance
 
 import com.winetime.winetime.createUser
 import com.winetime.winetime.createWine
-import com.winetime.winetime.tastingnotes.TastingNote
-import com.winetime.winetime.tastingnotes.TastingNoteRepository
-import com.winetime.winetime.tastingnotes.TastingNotesResponse
-import com.winetime.winetime.tastingnotes.TastingScore
+import com.winetime.winetime.tastingnotes.*
 import com.winetime.winetime.users.UserRepository
 import com.winetime.winetime.wines.WineRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -13,9 +10,12 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 
-internal class TastingNoteControllerTest : BaseAcceptanceTest() {
+internal class TastingNotesControllerTest : BaseAcceptanceTest() {
     @Autowired
     lateinit var userRepo: UserRepository
 
@@ -36,7 +36,6 @@ internal class TastingNoteControllerTest : BaseAcceptanceTest() {
             val wine = createWine()
             userRepo.saveAll(mutableListOf(user1, user2))
             wineRepo.save(wine)
-
             val tastingNote1 = TastingNote(
                     wine = wine,
                     user = user1,
@@ -50,13 +49,46 @@ internal class TastingNoteControllerTest : BaseAcceptanceTest() {
                     notes = "Like a fruit-filled dirty bomb went off in my mouth",
                     score = TastingScore.TWO
             )
-
             tastingNoteRepo.saveAll(mutableListOf(tastingNote1, tastingNote2))
 
             val response = restTemplate.getForEntity("/tasting-notes", TastingNotesResponse::class.java)
 
             assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
             assertThat(response.body?.tastingNotes).contains(tastingNote1, tastingNote2)
+        }
+    }
+
+    @DisplayName("POST /tasting-notes")
+    @Nested
+    inner class PostNotes {
+        @DisplayName("creates a new tasting new from the user and wine")
+        @Test
+        fun success() {
+            assertThat(tastingNoteRepo.findAll()).isEmpty()
+            val user = userRepo.save(createUser())
+            val wine = wineRepo.save(createWine())
+            val tastingNote = TastingNote(
+                    wine = wine,
+                    user = user,
+                    notes = "Fruity and delightful",
+                    score = TastingScore.FOUR
+            )
+            val tastingNoteWithId = tastingNote.copy(id = 1)
+
+            val requestBody = TastingNoteCreationTemplate(
+                    wineId = wine.id!!,
+                    userId = user.id!!,
+                    notes = "Fruity and delightful",
+                    score = TastingScore.FOUR
+            )
+            val headers = HttpHeaders()
+            headers.contentType = MediaType.APPLICATION_JSON
+
+            val response = restTemplate.postForEntity("/tasting-notes", HttpEntity(requestBody, headers), TastingNote::class.java)
+
+            assertThat(response.statusCode).isEqualTo(HttpStatus.CREATED)
+            assertThat(response.body).isEqualTo(tastingNoteWithId)
+            assertThat(tastingNoteRepo.findAll()).contains(tastingNoteWithId)
         }
     }
 }
