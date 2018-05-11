@@ -1,5 +1,6 @@
 package com.winetime.winetime.acceptance
 
+import com.winetime.winetime.createHeaders
 import com.winetime.winetime.createUser
 import com.winetime.winetime.createWine
 import com.winetime.winetime.tastingnotes.*
@@ -11,9 +12,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 
 internal class TastingNotesControllerTest : BaseAcceptanceTest() {
     @Autowired
@@ -81,10 +80,8 @@ internal class TastingNotesControllerTest : BaseAcceptanceTest() {
                     notes = "Fruity and delightful",
                     score = TastingScore.FOUR
             )
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.APPLICATION_JSON
 
-            val response = restTemplate.postForEntity("/tasting-notes", HttpEntity(requestBody, headers), TastingNote::class.java)
+            val response = restTemplate.postForEntity("/tasting-notes", HttpEntity(requestBody, createHeaders()), TastingNote::class.java)
 
             assertThat(response.statusCode).isEqualTo(HttpStatus.CREATED)
             assertThat(response.body).isEqualTo(tastingNoteWithId)

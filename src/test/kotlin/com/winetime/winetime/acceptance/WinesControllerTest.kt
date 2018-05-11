@@ -1,17 +1,18 @@
 package com.winetime.winetime.acceptance
 
+import com.winetime.winetime.createHeaders
 import com.winetime.winetime.createWine
 import com.winetime.winetime.wines.Wine
 import com.winetime.winetime.wines.WineRepository
 import com.winetime.winetime.wines.WineResponse
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.getForEntity
 import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 
 class WinesControllerTest : BaseAcceptanceTest() {
     @Autowired
@@ -52,20 +53,13 @@ class WinesControllerTest : BaseAcceptanceTest() {
     @DisplayName("POST /wines")
     @Nested
     inner class PostWines {
-        private val headers = HttpHeaders()
-
-        @BeforeEach
-        fun setup() {
-            headers.contentType = MediaType.APPLICATION_JSON
-        }
-
         @DisplayName("creates a new wine")
         @Test
         fun success() {
             assertThat(wineRepo.findAll()).isEmpty()
             val wine = createWine()
             val wineWithId = wine.copy(id=1)
-            val request = HttpEntity(mapper.writeValueAsString(wine), headers)
+            val request = HttpEntity(mapper.writeValueAsString(wine), createHeaders())
 
             val response = restTemplate.postForEntity("/wines", request, Wine::class.java)
 
@@ -77,7 +71,7 @@ class WinesControllerTest : BaseAcceptanceTest() {
         @DisplayName("returns an error if the request is malformed")
         @Test
         fun failure() {
-            val request = HttpEntity("'some': 'gibberish'", headers)
+            val request = HttpEntity("'some': 'gibberish'", createHeaders())
 
             val response = restTemplate.postForEntity("/wines", request, Wine::class.java)
 

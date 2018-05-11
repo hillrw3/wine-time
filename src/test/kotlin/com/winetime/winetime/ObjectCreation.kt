@@ -2,6 +2,8 @@ package com.winetime.winetime
 
 import com.winetime.winetime.users.User
 import com.winetime.winetime.wines.Wine
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 
 fun createWine(
         winery: String = "Castelgreve",
@@ -16,3 +18,9 @@ fun createUser(
         username: String = "bill",
         password: String = "superSecure"
 ): User = User(username = username, password = password)
+
+fun createHeaders() : HttpHeaders {
+    val headers = HttpHeaders()
+    headers.contentType = MediaType.APPLICATION_JSON
+    return headers
+}

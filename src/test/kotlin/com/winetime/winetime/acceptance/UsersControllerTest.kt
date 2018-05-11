@@ -1,5 +1,6 @@
 package com.winetime.winetime.acceptance
 
+import com.winetime.winetime.createHeaders
 import com.winetime.winetime.createUser
 import com.winetime.winetime.users.User
 import com.winetime.winetime.users.UserRepository
@@ -10,9 +11,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 
 internal class UsersControllerTest : BaseAcceptanceTest() {
     @Autowired
@@ -54,9 +53,7 @@ internal class UsersControllerTest : BaseAcceptanceTest() {
             assertThat(userRepository.findAll()).isEmpty()
             val user = createUser()
             val userWithId = user.copy(id = 1)
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.APPLICATION_JSON
-            val request = HttpEntity(user, headers)
+            val request = HttpEntity(user, createHeaders())
 
             val response = restTemplate.postForEntity("/users", request, User::class.java)
 
@@ -69,9 +66,7 @@ internal class UsersControllerTest : BaseAcceptanceTest() {
         @Test
         fun badRequest() {
             assertThat(userRepository.findAll()).isEmpty()
-            val headers = HttpHeaders()
-            headers.contentType = MediaType.APPLICATION_JSON
-            val request = HttpEntity("'some': 'badData'", headers)
+            val request = HttpEntity("'some': 'badData'", createHeaders())
 
             val response = restTemplate.postForEntity("/users", request, User::class.java)
 
