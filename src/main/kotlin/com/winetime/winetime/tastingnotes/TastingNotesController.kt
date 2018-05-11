@@ -7,12 +7,9 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/tasting-notes")
-class TastingNotesController(
-        @Autowired val tastingNoteRepository: TastingNoteRepository,
-        @Autowired val tastingNoteService: TastingNoteService
-) {
+class TastingNotesController(@Autowired val tastingNoteService: TastingNoteService) {
     @GetMapping
-    fun getNotes() : TastingNotesResponse = TastingNotesResponse(tastingNoteRepository.findAll())
+    fun getNotes() : TastingNotesResponse = TastingNotesResponse(tastingNoteService.findAll())
 
     @PostMapping
     fun create(@RequestBody tastingNoteTemplate: TastingNoteCreationTemplate): ResponseEntity<TastingNote> {

@@ -25,4 +25,7 @@ class TastingNoteService(
         )
     }
 
+    fun findAll(): List<TastingNote> {
+        return tastingNoteRepository.findAll()
+    }
 }
