@@ -3,6 +3,7 @@ package com.winetime.winetime.unit.users
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import com.winetime.winetime.tastingnotes.TastingNoteRepository
 import com.winetime.winetime.users.User
 import com.winetime.winetime.users.UserRepository
 import com.winetime.winetime.users.UserService
@@ -16,9 +17,12 @@ internal class UserServiceTest {
     lateinit var service: UserService
     val userRepo = mock<UserRepository> ()
 
+    lateinit var tastingNoteService: TastingNoteRepository
+    val tastingNoteRepo = mock<TastingNoteRepository> ()
+
     @BeforeEach
     fun setup() {
-        service = UserService(userRepo)
+        service = UserService(userRepo, tastingNoteRepo)
     }
 
     @DisplayName("#generateToken")
