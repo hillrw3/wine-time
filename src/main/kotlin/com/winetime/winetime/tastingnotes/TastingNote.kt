@@ -21,13 +21,6 @@ data class TastingNote(
         var wine: Wine = Wine()
 )
 
-data class TastingNoteCreationTemplate(
-        val notes: String = "",
-        val score: TastingScore = TastingScore.ONE,
-        val userId: Int,
-        val wineId: Int
-)
-
 enum class TastingScore(val value: Int) {
     ONE(1),
     TWO(2),

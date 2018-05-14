@@ -60,12 +60,13 @@ internal class TastingNotesControllerTest : BaseAcceptanceTest() {
     @DisplayName("POST /tasting-notes")
     @Nested
     inner class PostNotes {
+        val user = userRepo.save(createUser())
+        val wine = wineRepo.save(createWine())
+
         @DisplayName("creates a new tasting new from the user and wine")
         @Test
         fun success() {
             assertThat(tastingNoteRepo.findAll()).isEmpty()
-            val user = userRepo.save(createUser())
-            val wine = wineRepo.save(createWine())
             val tastingNote = TastingNote(
                     wine = wine,
                     user = user,
@@ -77,8 +78,8 @@ internal class TastingNotesControllerTest : BaseAcceptanceTest() {
             val requestBody = TastingNoteCreationTemplate(
                     wineId = wine.id!!,
                     userId = user.id!!,
-                    notes = "Fruity and delightful",
-                    score = TastingScore.FOUR
+                    notes = tastingNote.notes,
+                    score = tastingNote.score
             )
 
             val response = restTemplate.postForEntity("/tasting-notes", HttpEntity(requestBody, createHeaders()), TastingNote::class.java)
@@ -86,6 +87,21 @@ internal class TastingNotesControllerTest : BaseAcceptanceTest() {
             assertThat(response.statusCode).isEqualTo(HttpStatus.CREATED)
             assertThat(response.body).isEqualTo(tastingNoteWithId)
             assertThat(tastingNoteRepo.findAll()).contains(tastingNoteWithId)
+        }
+
+        @DisplayName("validates all required fields are present")
+        @Test
+        fun validation() {
+            val requestBody = TastingNoteCreationTemplate(
+                    wineId = wine.id,
+                    userId = user.id,
+                    notes = "delightful"
+            )
+
+            val response = restTemplate.postForEntity("/tasting-notes", HttpEntity(requestBody, createHeaders()), TastingNoteResponse::class.java)
+
+            assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
+            assertThat(response.body?.errors).containsKey("score")
         }
     }
 }

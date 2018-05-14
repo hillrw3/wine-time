@@ -13,14 +13,14 @@ class TastingNoteService(
 ) {
 
     fun save(tastingNoteTemplate: TastingNoteCreationTemplate): TastingNote {
-        val user = userRepository.getOne(tastingNoteTemplate.userId)
-        val wine = wineRepository.getOne(tastingNoteTemplate.wineId)
+        val user = userRepository.getOne(tastingNoteTemplate.userId!!)
+        val wine = wineRepository.getOne(tastingNoteTemplate.wineId!!)
         return tastingNoteRepository.save(
                 TastingNote(
                         user = user,
                         wine = wine,
-                        notes = tastingNoteTemplate.notes,
-                        score = tastingNoteTemplate.score
+                        notes = tastingNoteTemplate.notes!!,
+                        score = tastingNoteTemplate.score!!
                 )
         )
     }

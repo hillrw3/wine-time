@@ -12,8 +12,15 @@ class TastingNotesController(@Autowired val tastingNoteService: TastingNoteServi
     fun getNotes() : TastingNotesResponse = TastingNotesResponse(tastingNoteService.findAll())
 
     @PostMapping
-    fun create(@RequestBody tastingNoteTemplate: TastingNoteCreationTemplate): ResponseEntity<TastingNote> {
+    fun create(@RequestBody tastingNoteTemplate: TastingNoteCreationTemplate): ResponseEntity<TastingNoteResponse> {
+        if (tastingNoteTemplate.errors.isNotEmpty()) {
+            return ResponseEntity(
+                    TastingNoteResponse(errors = tastingNoteTemplate.errors),
+                    HttpStatus.BAD_REQUEST
+            )
+        }
+
         val tastingNote = tastingNoteService.save(tastingNoteTemplate)
-        return ResponseEntity(tastingNote, HttpStatus.CREATED)
+        return ResponseEntity(TastingNoteResponse(tastingNote), HttpStatus.CREATED)
     }
 }
