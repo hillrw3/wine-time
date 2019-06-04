@@ -12,7 +12,7 @@ class TastingNoteService(
         @Autowired val wineRepository: WineRepository
 ) {
 
-    fun save(tastingNoteTemplate: TastingNoteCreationTemplate): TastingNote {
+    fun save(tastingNoteTemplate: TastingNoteRequest): TastingNote {
         val user = userRepository.getOne(tastingNoteTemplate.userId!!)
         val wine = wineRepository.getOne(tastingNoteTemplate.wineId!!)
         return tastingNoteRepository.save(

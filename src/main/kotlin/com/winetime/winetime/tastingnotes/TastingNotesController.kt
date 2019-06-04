@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/tasting-notes")
 class TastingNotesController(@Autowired val tastingNoteService: TastingNoteService) {
     @GetMapping
-    fun getNotes() : TastingNotesResponse = TastingNotesResponse(tastingNoteService.findAll())
+    fun getNotes(): TastingNotesResponse = TastingNotesResponse(tastingNoteService.findAll())
 
     @PostMapping
-    fun create(@RequestBody tastingNoteTemplate: TastingNoteCreationTemplate): ResponseEntity<TastingNoteResponse> {
+    fun create(@RequestBody tastingNoteTemplate: TastingNoteRequest): ResponseEntity<TastingNoteResponse> {
         if (tastingNoteTemplate.errors.isNotEmpty()) {
             return ResponseEntity(
                     TastingNoteResponse(errors = tastingNoteTemplate.errors),

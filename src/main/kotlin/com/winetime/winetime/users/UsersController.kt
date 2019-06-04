@@ -11,16 +11,16 @@ import org.springframework.web.bind.annotation.*
 class UsersController(@Autowired private val userService: UserService) {
 
     @GetMapping("/{id}/tasting-notes")
-    fun getTastingNotes(@PathVariable(name = "id") id: Int) : TastingNotesResponse {
+    fun getTastingNotes(@PathVariable(name = "id") id: Int): TastingNotesResponse {
         val tastingNotes = userService.getTastingNotes(id)
 
         return TastingNotesResponse(tastingNotes)
     }
 
     @PostMapping("/token")
-    fun getToken(@RequestBody userCredentials: User) : ResponseEntity<UserTokenResponse> {
+    fun getToken(@RequestBody userCredentials: User): ResponseEntity<UserTokenResponse> {
         val token = userService.generateToken(userCredentials)
-        val status = if (token != null)  HttpStatus.OK else HttpStatus.BAD_REQUEST
+        val status = if (token != null) HttpStatus.OK else HttpStatus.BAD_REQUEST
 
         return ResponseEntity(UserTokenResponse(token), status)
     }

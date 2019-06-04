@@ -1,6 +1,5 @@
 package com.winetime.winetime.acceptance
 
-import com.winetime.winetime.createHeaders
 import com.winetime.winetime.createUser
 import com.winetime.winetime.createWine
 import com.winetime.winetime.tastingnotes.*
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 
 internal class TastingNotesControllerTest : BaseAcceptanceTest() {
@@ -75,30 +73,30 @@ internal class TastingNotesControllerTest : BaseAcceptanceTest() {
             )
             val tastingNoteWithId = tastingNote.copy(id = 1)
 
-            val requestBody = TastingNoteCreationTemplate(
+            val requestBody = TastingNoteRequest(
                     wineId = wine.id!!,
                     userId = user.id!!,
                     notes = tastingNote.notes,
                     score = tastingNote.score
             )
 
-            val response = restTemplate.postForEntity("/tasting-notes", HttpEntity(requestBody, createHeaders()), TastingNote::class.java)
+            val response = restTemplate.postForEntity("/tasting-notes", requestBody, TastingNoteResponse::class.java)
 
             assertThat(response.statusCode).isEqualTo(HttpStatus.CREATED)
-            assertThat(response.body).isEqualTo(tastingNoteWithId)
+            assertThat(response.body?.tastingNote).isEqualTo(tastingNoteWithId)
             assertThat(tastingNoteRepo.findAll()).contains(tastingNoteWithId)
         }
 
         @DisplayName("validates all required fields are present")
         @Test
         fun validation() {
-            val requestBody = TastingNoteCreationTemplate(
+            val requestBody = TastingNoteRequest(
                     wineId = wine.id,
                     userId = user.id,
                     notes = "delightful"
             )
 
-            val response = restTemplate.postForEntity("/tasting-notes", HttpEntity(requestBody, createHeaders()), TastingNoteResponse::class.java)
+            val response = restTemplate.postForEntity("/tasting-notes", requestBody, TastingNoteResponse::class.java)
 
             assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
             assertThat(response.body?.errors).containsKey("score")

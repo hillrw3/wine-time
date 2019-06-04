@@ -15,10 +15,9 @@ import org.junit.jupiter.api.Test
 
 internal class UserServiceTest {
     lateinit var service: UserService
-    val userRepo = mock<UserRepository> ()
+    val userRepo = mock<UserRepository>()
 
-    lateinit var tastingNoteService: TastingNoteRepository
-    val tastingNoteRepo = mock<TastingNoteRepository> ()
+    val tastingNoteRepo = mock<TastingNoteRepository>()
 
     @BeforeEach
     fun setup() {

@@ -1,6 +1,6 @@
 package com.winetime.winetime.tastingnotes
 
-data class TastingNoteCreationTemplate(
+data class TastingNoteRequest(
         val notes: String? = null,
         val score: TastingScore? = null,
         val userId: Int? = null,
@@ -8,7 +8,7 @@ data class TastingNoteCreationTemplate(
 ) {
     val errors: Map<String, String> = calculateErrors()
 
-    private fun requiredFields() : Map<String, Any?> = mapOf(
+    private fun requiredFields(): Map<String, Any?> = mapOf(
             "notes" to notes,
             "score" to score,
             "userId" to userId,

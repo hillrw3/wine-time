@@ -26,10 +26,10 @@ fun createTastingNote(
         wine: Wine,
         notes: String = "Dry with a hint of Tabasco",
         score: TastingScore = TastingScore.FOUR
-) : TastingNote = TastingNote(user = user, wine = wine, notes = notes, score = score)
+): TastingNote = TastingNote(user = user, wine = wine, notes = notes, score = score)
 
-fun createHeaders() : HttpHeaders {
-    val headers = HttpHeaders()
-    headers.contentType = MediaType.APPLICATION_JSON
-    return headers
+fun createHeaders(): HttpHeaders {
+    return HttpHeaders().apply {
+        contentType = MediaType.APPLICATION_JSON
+    }
 }

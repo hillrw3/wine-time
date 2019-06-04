@@ -64,9 +64,8 @@ internal class UsersControllerTest : BaseAcceptanceTest() {
             assertThat(userRepository.findAll()).isEmpty()
             val user = createUser()
             val userWithId = user.copy(id = 1)
-            val request = HttpEntity(user, createHeaders())
 
-            val response = restTemplate.postForEntity("/users", request, User::class.java)
+            val response = restTemplate.postForEntity("/users", user, User::class.java)
 
             assertThat(response.statusCode).isEqualTo(HttpStatus.CREATED)
             assertThat(response.body).isEqualTo(userWithId)
@@ -77,7 +76,6 @@ internal class UsersControllerTest : BaseAcceptanceTest() {
         @Test
         fun badRequest() {
             val request = HttpEntity("'some': 'badData'", createHeaders())
-
             val response = restTemplate.postForEntity("/users", request, User::class.java)
 
             assertThat(response.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)

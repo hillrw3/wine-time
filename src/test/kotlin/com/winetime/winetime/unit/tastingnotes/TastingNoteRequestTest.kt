@@ -1,15 +1,15 @@
 package com.winetime.winetime.unit.tastingnotes
 
-import com.winetime.winetime.tastingnotes.TastingNoteCreationTemplate
+import com.winetime.winetime.tastingnotes.TastingNoteRequest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
-class TastingNoteCreationTemplateTest {
+class TastingNoteRequestTest {
     @DisplayName("validates required fields on object creation")
     @Test
     fun validation() {
-        val tastingNoteCreationTemplate = TastingNoteCreationTemplate()
+        val tastingNoteCreationTemplate = TastingNoteRequest()
 
         assertThat(tastingNoteCreationTemplate.errors).isEqualTo(
                 mapOf(

@@ -102,10 +102,9 @@ class WinesControllerTest : BaseAcceptanceTest() {
         fun success() {
             assertThat(wineRepo.findAll()).isEmpty()
             val wine = createWine()
-            val wineWithId = wine.copy(id=1)
-            val request = HttpEntity(mapper.writeValueAsString(wine), createHeaders())
+            val wineWithId = wine.copy(id = 1)
 
-            val response = restTemplate.postForEntity("/wines", request, Wine::class.java)
+            val response = restTemplate.postForEntity("/wines", wine, Wine::class.java)
 
             assertThat(response.statusCode).isEqualTo(HttpStatus.CREATED)
             assertThat(response.body).isEqualTo(wineWithId)

@@ -10,7 +10,7 @@ class UserService(
         @Autowired private val userRepository: UserRepository,
         @Autowired private val tastingNoteRepository: TastingNoteRepository
 ) {
-    fun generateToken(userCredentials: User) : String? {
+    fun generateToken(userCredentials: User): String? {
         val user = userRepository.findFirstByUsernameAndPassword(
                 username = userCredentials.username,
                 password = userCredentials.password
@@ -23,7 +23,7 @@ class UserService(
         return userRepository.save(userAttributes)
     }
 
-    fun getTastingNotes(id: Int) : List<TastingNote> {
+    fun getTastingNotes(id: Int): List<TastingNote> {
         return tastingNoteRepository.findByUserId(id)
     }
 }

@@ -21,7 +21,7 @@ class WinesController(@Autowired private val wineService: WineService) {
     }
 
     @PostMapping
-    fun create(@RequestBody wineAttributes : Wine) : ResponseEntity<Wine> {
+    fun create(@RequestBody wineAttributes: Wine): ResponseEntity<Wine> {
         val wine = wineService.save(wineAttributes)
 
         return ResponseEntity(wine, HttpStatus.CREATED)
